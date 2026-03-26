@@ -1,0 +1,11 @@
+
+[
+  {"texto": "El producto llegó dañado y tarde, muy mala experiencia.", "fuente": "whatsapp"},
+  {"texto": "Excelente atención al cliente, resolvieron mi duda rápido.", "fuente": "whatsapp"},
+  {"texto": "El precio es muy alto para la calidad que tiene.", "fuente": "web"},
+  {"texto": "Me encanta el servicio, lo recomiendo 100%.", "fuente": "whatsapp"},
+  {"texto": "La entrega fue rápida pero el empaque estaba roto.", "fuente": "encuesta"},
+  {"texto": "Atención horrible, me hicieron esperar más de 30 minutos.", "fuente": "whatsapp"},
+  {"texto": "Producto de muy buena calidad, llegó perfecto.", "fuente": "whatsapp"},
+  {"texto": "No me gustó el sabor, devolución por favor.", "fuente": "web"}
+]
