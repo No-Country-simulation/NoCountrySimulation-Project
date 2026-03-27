@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 import pandas as pd
 import os
 import httpx
+from .pipeline import llm
+
 
 from .database import SessionLocal, engine
 from .models import Base, Feedback
