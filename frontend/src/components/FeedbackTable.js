@@ -1,4 +1,5 @@
 
+// Components/FeedbackTable.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -27,14 +28,28 @@ const FeedbackTable = () => {
           </tr>
         </thead>
         <tbody>
-          {feedbacks.map(fb => (
-            <tr key={fb.id}>
+          {feedbacks.map((fb, index) => (
+            <tr key={fb.id || index}>
               <td>{new Date(fb.fecha).toLocaleString()}</td>
-              <td>{fb.fuente}</td>
-              <td style={{ maxWidth: '300px' }}>{fb.texto.substring(0, 100)}...</td>
+
+              <td>
+                {fb.fuente === "telegram" ? "📱 Telegram" : "🌐 Web"}
+              </td>
+
+              <td style={{ maxWidth: '300px' }}>
+                {fb.texto?.substring(0, 100)}...
+              </td>
+
               <td>{fb.sentimiento}</td>
               <td>{fb.categoria}</td>
-              <td>{fb.urgencia}</td>
+
+              <td style={{
+                color: fb.urgencia === "alta" ? "red" : "black",
+                fontWeight: fb.urgencia === "alta" ? "bold" : "normal"
+              }}>
+                {fb.urgencia}
+              </td>
+
               <td>{fb.resumen}</td>
             </tr>
           ))}

@@ -1,17 +1,20 @@
 
+
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import pandas as pd
 import os
 import httpx
-from .pipeline import llm
+from dotenv import load_dotenv
 
+# Cargar variables de entorno
+load_dotenv()
 
+from .pipeline import llm, chain, vectorstore, parser
 from .database import SessionLocal, engine
 from .models import Base, Feedback
 from .schemas import FeedbackCreate, Clasificacion
-from .pipeline import chain, vectorstore, parser
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,6 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ====================== DB ======================
 def get_db():
     db = SessionLocal()
     try:
@@ -32,9 +36,8 @@ def get_db():
     finally:
         db.close()
 
-# ====================== FUNCIÓN ÚNICA DE PROCESAMIENTO ======================
+# ====================== FUNCIÓN PRINCIPAL ======================
 def procesar_feedback(texto: str, fuente: str, db: Session) -> Clasificacion:
-    """Aquí converge TODO: manual y Telegram. Es el único lugar donde se hace IA + guardado."""
     try:
         resultado = chain.invoke({
             "texto": texto,
@@ -42,7 +45,6 @@ def procesar_feedback(texto: str, fuente: str, db: Session) -> Clasificacion:
             "format_instructions": parser.get_format_instructions()
         })
 
-        # Guardar en SQLite
         nuevo_feedback = Feedback(
             texto=texto,
             fuente=fuente,
@@ -51,33 +53,49 @@ def procesar_feedback(texto: str, fuente: str, db: Session) -> Clasificacion:
             urgencia=resultado.urgencia,
             resumen=resultado.resumen
         )
+
         db.add(nuevo_feedback)
         db.commit()
         db.refresh(nuevo_feedback)
 
-        # Guardar embedding en Pinecone
         vectorstore.add_texts(
             texts=[texto],
-            metadatas=[{"feedback_id": nuevo_feedback.id, "sentimiento": resultado.sentimiento}]
+            metadatas=[{
+                "feedback_id": nuevo_feedback.id,
+                "sentimiento": resultado.sentimiento
+            }]
         )
 
         return resultado
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ====================== TELEGRAM SEND ======================
+async def send_telegram_message(chat_id: int, text: str):
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        print("Falta TELEGRAM_BOT_TOKEN")
+        return
 
-# ====================== ENDPOINT MANUAL  ======================
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+
+    async with httpx.AsyncClient() as client:
+        await client.post(url, json={
+            "chat_id": chat_id,
+            "text": text
+        })
+
+# ====================== ENDPOINT MANUAL ======================
 @app.post("/clasificar", response_model=Clasificacion)
 def clasificar_feedback(feedback: FeedbackCreate, db: Session = Depends(get_db)):
     return procesar_feedback(feedback.texto, feedback.fuente, db)
 
-
-# ====================== ENDPOINT TELEGRAM (tiempo real) ======================
+# ====================== WEBHOOK TELEGRAM ======================
 @app.post("/webhook/telegram")
 async def telegram_webhook(request: Request, db: Session = Depends(get_db)):
     update = await request.json()
 
-    # Solo procesamos mensajes de texto
     if "message" in update and "text" in update["message"]:
         texto = update["message"]["text"]
         chat_id = update["message"]["chat"]["id"]
@@ -85,73 +103,126 @@ async def telegram_webhook(request: Request, db: Session = Depends(get_db)):
 
         resultado = procesar_feedback(texto, fuente, db)
 
-        # Respuesta automática al usuario en Telegram
+        # Mensaje para ADMIN (tú)
+        admin_chat_id = os.getenv("ADMIN_CHAT_ID")
+
         reply = (
-            f" ¡Feedback clasificado automáticamente!\n\n"
+            f" Nuevo feedback recibido\n\n"
+            f" Usuario: {chat_id}\n"
+            f" Texto: {texto}\n\n"
             f" Sentimiento: {resultado.sentimiento.upper()}\n"
             f" Categoría: {resultado.categoria}\n"
             f" Urgencia: {resultado.urgencia.upper()}\n"
             f" Resumen: {resultado.resumen}"
         )
-        await send_telegram_message(chat_id, reply)
+
+        #  Responder al usuario (simple)
+        await send_telegram_message(chat_id, "✅ Gracias por tu feedback")
+
+        #  Enviar resultado al ADMIN
+        if admin_chat_id:
+            await send_telegram_message(int(admin_chat_id), reply)
+        else:
+            print("Falta ADMIN_CHAT_ID en .env")
+
         return {"status": "procesado"}
 
     return {"status": "ignorado"}
 
-
-async def send_telegram_message(chat_id: int, text: str):
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    if not token:
-        return
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    async with httpx.AsyncClient() as client:
-        await client.post(url, json={"chat_id": chat_id, "text": text})
-
-
-# ====================== ENDPOINT PARA CONFIGURAR WEBHOOK ======================
+# ====================== CONFIG WEBHOOK ======================
 @app.get("/set-webhook")
 async def set_telegram_webhook(ngrok_url: str):
-    """Llama a este endpoint después de correr ngrok"""
     token = os.getenv("TELEGRAM_BOT_TOKEN")
+
     if not token:
-        return {"error": "Falta TELEGRAM_BOT_TOKEN en .env"}
+        return {"error": "Falta TELEGRAM_BOT_TOKEN"}
 
     webhook_url = f"{ngrok_url.rstrip('/')}/webhook/telegram"
-    set_url = f"https://api.telegram.org/bot{token}/setWebhook?url={webhook_url}&drop_pending_updates=true"
+
+    set_url = (
+        f"https://api.telegram.org/bot{token}/setWebhook"
+        f"?url={webhook_url}&drop_pending_updates=true"
+    )
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(set_url)
         return resp.json()
 
-
-# ====================== ENDPOINTS EXISTENTES ======================
+# ====================== INSIGHTS ======================
 @app.get("/insights")
 def obtener_insights(db: Session = Depends(get_db)):
     df = pd.read_sql("SELECT * FROM feedbacks", engine)
+
     if df.empty:
         return {"total": 0, "mensaje": "No hay feedbacks aún"}
+
+    # ================= GENERAL =================
+    total = len(df)
 
     sentiment_count = df['sentimiento'].value_counts().to_dict()
     categoria_count = df['categoria'].value_counts().to_dict()
     urgencia_count = df['urgencia'].value_counts().to_dict()
 
-    docs = vectorstore.similarity_search("problemas y quejas más frecuentes de clientes", k=15)
-    temas = llm.invoke(f"Resume en máximo 6 temas claros:\n{[d.page_content for d in docs]}").content if docs else "No hay datos suficientes"
+    # ================= POR FUENTE =================
+    df_web = df[df["fuente"] == "web"]
+    df_telegram = df[df["fuente"] == "telegram"]
+
+    telegram_stats = {
+        "total": len(df_telegram),
+        "sentimiento": df_telegram['sentimiento'].value_counts().to_dict(),
+        "categorias": df_telegram['categoria'].value_counts().to_dict(),
+        "urgencia": df_telegram['urgencia'].value_counts().to_dict(),
+    }
+
+    web_stats = {
+        "total": len(df_web),
+        "sentimiento": df_web['sentimiento'].value_counts().to_dict(),
+        "categorias": df_web['categoria'].value_counts().to_dict(),
+        "urgencia": df_web['urgencia'].value_counts().to_dict(),
+    }
+
+    # ================= TEMAS (solo Telegram opcional) =================
+    docs = vectorstore.similarity_search(
+        "problemas y quejas más frecuentes de clientes",
+        k=15
+    )
+
+    temas = (
+        llm.invoke(
+            f"Resume en máximo 6 temas claros:\n{[d.page_content for d in docs]}"
+        ).content
+        if docs else "No hay datos suficientes"
+    )
 
     return {
-        "total": len(df),
+        "total": total,
+
+        # 🔹 Global
         "sentimiento": sentiment_count,
         "categorias": categoria_count,
         "urgencia": urgencia_count,
+
+        # 🔹 Por canal
+        "web": web_stats,
+        "telegram": telegram_stats,
+
+        # 🔹 IA
         "temas_recurrentes": temas
     }
 
+# ====================== LISTAR ======================
 @app.get("/feedbacks")
 def listar_feedbacks(db: Session = Depends(get_db)):
     return db.query(Feedback).all()
 
+# ====================== EXPORT ======================
 @app.get("/export/csv")
 def exportar_csv():
     df = pd.read_sql("SELECT * FROM feedbacks", engine)
     df.to_csv("feedbacks_export.csv", index=False)
     return {"mensaje": "Archivo generado: feedbacks_export.csv"}
+
+# ====================== SOLO TELEGRAM ======================
+@app.get("/mensajes")
+def obtener_mensajes_telegram(db: Session = Depends(get_db)):
+    return db.query(Feedback).filter(Feedback.fuente == "telegram").all()
