@@ -1,0 +1,14 @@
+/*frontend/src/App.css*/
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h1 { color: #2c3e50; }

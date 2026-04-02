@@ -6,6 +6,10 @@ from sqlalchemy.orm import Session
 import pandas as pd
 import os
 import httpx
+from typing import List
+from .schemas import FeedbackSchema
+from fastapi.responses import StreamingResponse
+import io
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
@@ -211,7 +215,7 @@ def obtener_insights(db: Session = Depends(get_db)):
     }
 
 # ====================== LISTAR ======================
-@app.get("/feedbacks")
+@app.get("/feedbacks", response_model=List[FeedbackSchema])
 def listar_feedbacks(db: Session = Depends(get_db)):
     return db.query(Feedback).all()
 
@@ -219,8 +223,18 @@ def listar_feedbacks(db: Session = Depends(get_db)):
 @app.get("/export/csv")
 def exportar_csv():
     df = pd.read_sql("SELECT * FROM feedbacks", engine)
-    df.to_csv("feedbacks_export.csv", index=False)
-    return {"mensaje": "Archivo generado: feedbacks_export.csv"}
+    
+    # Crear buffer en memoria
+    output = io.StringIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+    
+    # Devolver como archivo descargable
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=feedbacks_export.csv"}
+    )
 
 # ====================== SOLO TELEGRAM ======================
 @app.get("/mensajes")
