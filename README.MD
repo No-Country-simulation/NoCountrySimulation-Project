@@ -116,7 +116,10 @@ Además, incluye un **sistema RAG (Retrieval-Augmented Generation)** que permite
 | **HTTPX** | 0.25+ | Cliente HTTP async |
 | **Ngrok** | - | Tunneling para webhooks |
 
+
 ## 📁 Estructura del Proyecto
+
+```text
 feedback-classifier/
 │
 ├── backend/                          # Servidor backend
@@ -156,7 +159,6 @@ feedback-classifier/
 ├── .gitignore                        # Archivos ignorados por Git
 ├── README.md                         # Documentación
 └── LICENSE                           # Licencia MIT
-
 
 ## 🔧 Instalación y Configuración
 
