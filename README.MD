@@ -288,6 +288,7 @@ Exportación a CSV para análisis externo
 Visualización de resúmenes generados por IA
 
 4. Integración con Telegram
+```
 bash
 # Configurar webhook con ngrok
 ngrok http 8000
@@ -295,43 +296,63 @@ ngrok http 8000
 # Configurar webhook en tu backend
 curl "http://localhost:8000/set-webhook?ngrok_url=https://tu-url.ngrok-free.dev"
 Ahora los usuarios pueden enviar feedback directamente a tu bot de Telegram.
+```
 
-🔌 Endpoints API
-Clasificación
-Método	Endpoint	Descripción
-POST	/clasificar	Clasificar un feedback manual
-POST	/webhook/telegram	Webhook para Telegram
-GET	/set-webhook	Configurar webhook de Telegram
-Consultas
-Método	Endpoint	Descripción
-GET	/insights	Obtener métricas y análisis
-GET	/insights/avanzado	Insights con estadísticas detalladas
-GET	/feedbacks	Listar todos los feedbacks
-GET	/mensajes	Filtrar solo mensajes de Telegram
-GET	/export/csv	Exportar datos a CSV
-Sistema RAG
-Método	Endpoint	Descripción
-POST	/rag/consultar	Consultar tendencias con IA
-GET	/rag/tendencias	Análisis de tendencias automático
-GET	/rag/recomendaciones	Recomendaciones accionables
-GET	/rag/buscar/{tema}	Búsqueda semántica por tema
-Utilidades
-Método	Endpoint	Descripción
-POST	/check-duplicate	Verificar si un feedback es duplicado
-Ejemplos de uso
-bash
-# Clasificar feedback
+## 🔌 Endpoints API
+
+### Clasificación
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/clasificar` | Clasificar un feedback manual |
+| `POST` | `/webhook/telegram` | Webhook para Telegram |
+| `GET` | `/set-webhook` | Configurar webhook de Telegram |
+
+### Consultas
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/insights` | Obtener métricas y análisis |
+| `GET` | `/insights/avanzado` | Insights con estadísticas detalladas |
+| `GET` | `/feedbacks` | Listar todos los feedbacks |
+| `GET` | `/mensajes` | Filtrar solo mensajes de Telegram |
+| `GET` | `/export/csv` | Exportar datos a CSV |
+
+### Sistema RAG
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/rag/consultar` | Consultar tendencias con IA |
+| `GET` | `/rag/tendencias` | Análisis de tendencias automático |
+| `GET` | `/rag/recomendaciones` | Recomendaciones accionables |
+| `GET` | `/rag/buscar/{tema}` | Búsqueda semántica por tema |
+
+### Utilidades
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/check-duplicate` | Verificar si un feedback es duplicado |
+
+---
+
+## 💡 Ejemplos de uso
+
+### Clasificar feedback
+```bash
 curl -X POST http://localhost:8000/clasificar \
   -H "Content-Type: application/json" \
   -d '{"texto":"Excelente atención al cliente, muy rápido","fuente":"web"}'
+```
 
 # Consultar RAG
+```
 curl -X POST http://localhost:8000/rag/consultar \
   -H "Content-Type: application/json" \
   -d '{"query":"¿Qué opinan los clientes sobre el tiempo de entrega?"}'
+```
 
 # Exportar datos
+```
 curl http://localhost:8000/export/csv --output feedbacks.csv
+```
+
+
 🤖 Sistema RAG
 El sistema RAG permite realizar consultas inteligentes sobre el conjunto de feedbacks:
 
@@ -352,6 +373,8 @@ query = "¿Cómo se sienten los clientes sobre el producto X?"
 
 # Recomendaciones de mejora
 query = "¿Qué acciones podemos tomar para reducir los feedbacks negativos?"
+
+
 🔐 Variables de Entorno
 Variable	Requerida	Descripción
 OPENAI_API_KEY	✅	API key de OpenAI
@@ -359,6 +382,8 @@ PINECONE_API_KEY	✅	API key de Pinecone
 PINECONE_INDEX_NAME	✅	Nombre del índice (default: "feedbacks")
 TELEGRAM_BOT_TOKEN	❌	Token del bot de Telegram
 ADMIN_CHAT_ID	❌	Chat ID del administrador
+
+
 📊 Base de Datos
 Esquema SQLite
 sql
@@ -378,6 +403,8 @@ CREATE TABLE feedbacks (
 
 CREATE INDEX ix_feedbacks_texto_hash ON feedbacks(texto_hash);
 CREATE INDEX ix_feedbacks_fecha ON feedbacks(fecha);
+
+
 🤝 Contribución
 Las contribuciones son bienvenidas. Por favor:
 
