@@ -67,44 +67,8 @@ Además, incluye un **sistema RAG (Retrieval-Augmented Generation)** que permite
 - **Logging completo** de todas las operaciones
 
 ## 🏗️ Arquitectura del Sistema
-┌─────────────────────────────────────────────────────────────────┐
-│ Frontend (React) │
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
-│ │ Dashboard │ │ Upload Form │ │ Data Table │ │
-│ └──────────────┘ └──────────────┘ └──────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│
-│ HTTP/REST API
-▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Backend (FastAPI) │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ API Gateway │ │
-│ └──────────────────────────────────────────────────────┘ │
-│ │ │ │ │ │
-│ ▼ ▼ ▼ ▼ │
-│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
-│ │ NLP │ │ RAG │ │ Telegram │ │ Auth │ │
-│ │ Pipeline │ │ Engine │ │ Bot │ │ (Ops) │ │
-│ └──────────┘ └──────────┘ └──────────┘ └──────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│
-┌───────────────────┼───────────────────┐
-▼ ▼ ▼
-┌─────────────┐ ┌─────────────┐ ┌─────────────┐
-│ SQLite │ │ Pinecone │ │ OpenAI │
-│ Database │ │ Vector DB │ │ API │
-└─────────────┘ └─────────────┘ └─────────────┘
-│ │ │
-└───────────────────┴───────────────────┘
-│
-▼
-┌─────────────────────┐
-│ Telegram Cloud │
-│ (Webhook/Send) │
-└─────────────────────┘
+![Arquitrectura](img.png)
 
-text
 
 ### Flujo de Datos
 
@@ -154,41 +118,45 @@ text
 
 ## 📁 Estructura del Proyecto
 feedback-classifier/
-├── backend/
-│ ├── app/
-│ │ ├── init.py
-│ │ ├── main.py # Endpoints API y lógica principal
-│ │ ├── models.py # Modelos SQLAlchemy
-│ │ ├── schemas.py # Schemas Pydantic y validaciones
-│ │ ├── database.py # Configuración DB
-│ │ ├── pipeline.py # Pipeline de IA (LangChain)
-│ │ └── rag.py # Sistema RAG
-│ ├── requirements.txt # Dependencias Python
-│ ├── .env # Variables de entorno
-│ ├── feedback.db # Base de datos SQLite
-│ └── migrate_db.py # Script de migración
 │
-├── front/
-│ ├── public/
-│ │ └── index.html
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── Dashboard.js # Dashboard principal
-│ │ │ ├── FeedbackTable.js # Tabla de feedbacks
-│ │ │ ├── InsightsDashboard.js # Insights avanzados
-│ │ │ ├── UploadForm.js # Formulario de carga
-│ │ │ └── Header.js # Header con navegación
-│ │ ├── App.js # Componente principal
-│ │ ├── index.js # Punto de entrada
-│ │ └── index.css # Estilos globales
-│ ├── package.json # Dependencias Node
-│ └── tailwind.config.js # Configuración Tailwind
+├── backend/                          # Servidor backend
+│   ├── app/                          # Código principal
+│   │   ├── __init__.py
+│   │   ├── main.py                   # Endpoints API y lógica principal
+│   │   ├── models.py                 # Modelos SQLAlchemy (Base de datos)
+│   │   ├── schemas.py                # Schemas Pydantic (Validación)
+│   │   ├── database.py               # Configuración de BD
+│   │   ├── pipeline.py               # Pipeline de IA (LangChain)
+│   │   └── rag.py                    # Sistema RAG
+│   │
+│   ├── requirements.txt              # Dependencias Python
+│   ├── .env                          # Variables de entorno
+│   ├── feedback.db                   # Base de datos SQLite
+│   └── migrate_db.py                 # Script de migración
 │
-├── .gitignore
-├── README.md
-└── LICENSE
+├── front/                            # Cliente frontend
+│   ├── public/
+│   │   └── index.html                # HTML principal
+│   │
+│   ├── src/
+│   │   ├── components/               # Componentes React
+│   │   │   ├── Dashboard.js          # Dashboard principal
+│   │   │   ├── FeedbackTable.js      # Tabla de feedbacks
+│   │   │   ├── InsightsDashboard.js  # Insights avanzados
+│   │   │   ├── UploadForm.js         # Formulario de carga
+│   │   │   └── Header.js             # Header con navegación
+│   │   │
+│   │   ├── App.js                    # Componente principal
+│   │   ├── index.js                  # Punto de entrada
+│   │   └── index.css                 # Estilos globales (Tailwind)
+│   │
+│   ├── package.json                  # Dependencias Node
+│   └── tailwind.config.js            # Configuración TailwindCSS
+│
+├── .gitignore                        # Archivos ignorados por Git
+├── README.md                         # Documentación
+└── LICENSE                           # Licencia MIT
 
-text
 
 ## 🔧 Instalación y Configuración
 
@@ -409,8 +377,6 @@ Escribe tests para nuevas funcionalidades
 
 Actualiza la documentación según sea necesario
 
-📄 Licencia
-Distribuido bajo la Licencia MIT. Ver LICENSE para más información.
 
 🙏 Agradecimientos
 OpenAI por sus modelos de IA
@@ -421,9 +387,4 @@ FastAPI por el excelente framework
 
 React y la comunidad por las herramientas increíbles
 
-📞 Contacto
-Tu Damaris Calleros 
 
-Link del Proyecto: https://github.com/damariscall/Feedback-Classifier
-
-<div align="center"> Hecho con ❤️ y 🧠 (IA) </div> ```
