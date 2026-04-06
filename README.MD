@@ -255,39 +255,31 @@ Backend API: http://localhost:8000
 Documentación API: http://localhost:8000/docs
 
 
-📖 Uso del Sistema
-1. Cargar Feedback Manual
-Accede al formulario en el dashboard
+## 📖 Uso del Sistema
 
-Escribe o pega el feedback del cliente
+### 1. Cargar Feedback Manual
+* **Acceso:** Dirígete al formulario disponible en el dashboard principal.
+* **Proceso:** 1. Escribe o pega el texto del feedback recibido del cliente.
+    2. Selecciona la **fuente** correspondiente (Web, WhatsApp o Encuesta).
+    3. Haz clic en el botón **"Clasificar con IA"**.
+* **Resultado:** Visualiza de forma inmediata la clasificación generada por el modelo.
 
-Selecciona la fuente (Web/WhatsApp/Encuesta)
+### 2. Ver Dashboard de Insights
+El dashboard ofrece una visión analítica completa mediante:
+* **Métricas generales:** Conteo total de feedbacks desglosado por canal.
+* **Gráficos de sentimiento:** Visualización de la distribución (Positivo / Negativo / Neutral).
+* **Categorías principales:** Gráfico de barras (Bar chart) interactivo con los temas más comunes.
+* **Temas recurrentes:** Análisis automático realizado por la IA para detectar patrones.
+* **Comparativas por canal:** Análisis de rendimiento entre Web, WhatsApp y Telegram.
 
-Haz clic en "Clasificar con IA"
+### 3. Explorar Feedbacks
+* **Gestión de datos:** Tabla completa que muestra todos los feedbacks ya clasificados.
+* **Funciones:** Permite el filtrado y ordenamiento dinámico por cualquier columna.
+* **Exportación:** Opción de descargar los datos en formato **CSV** para auditorías o análisis externos.
+* **IA Summaries:** Visualización de resúmenes concisos generados automáticamente para cada entrada.
 
-Visualiza el resultado inmediato
-
-2. Ver Dashboard de Insights
-Métricas generales: Total de feedbacks por canal
-
-Gráficos de sentimiento: Distribución positiva/negativa/neutral
-
-Categorías principales: Bar chart interactivo
-
-Temas recurrentes: Análisis automático de IA
-
-Comparativas por canal: Web vs WhatsApp vs Telegram
-
-3. Explorar Feedbacks
-Tabla completa con todos los feedbacks clasificados
-
-Filtrado y ordenamiento por columnas
-
-Exportación a CSV para análisis externo
-
-Visualización de resúmenes generados por IA
-
-4. Integración con Telegram
+### 4. Integración con Telegram
+* El sistema está habilitado para recibir, procesar y clasificar mensajes en tiempo real directamente desde el bot configurado.
 ```
 bash
 # Configurar webhook con ngrok
