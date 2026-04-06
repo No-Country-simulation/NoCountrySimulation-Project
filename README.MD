@@ -340,31 +340,29 @@ curl -X POST http://localhost:8000/clasificar \
   -d '{"texto":"Excelente atención al cliente, muy rápido","fuente":"web"}'
 ```
 
-# Consultar RAG
+### Consultar RAG
 ```
 curl -X POST http://localhost:8000/rag/consultar \
   -H "Content-Type: application/json" \
   -d '{"query":"¿Qué opinan los clientes sobre el tiempo de entrega?"}'
 ```
 
-# Exportar datos
+### Exportar datos
 ```
 curl http://localhost:8000/export/csv --output feedbacks.csv
 ```
 
+## 🤖 Sistema RAG
 
-🤖 Sistema RAG
-El sistema RAG permite realizar consultas inteligentes sobre el conjunto de feedbacks:
+El sistema **RAG (Retrieval-Augmented Generation)** permite realizar consultas inteligentes sobre el conjunto de feedbacks, utilizando inteligencia artificial para extraer valor de los datos.
 
-Características
-Búsqueda semántica: Encuentra feedbacks relevantes por significado, no solo palabras clave
+### ✨ Características
+* **Búsqueda semántica:** Encuentra feedbacks relevantes por significado profundo, no solo por coincidencia de palabras clave.
+* **Contexto aumentado:** La IA genera respuestas precisas basándose exclusivamente en los feedbacks reales almacenados.
+* **Recomendaciones accionables:** El sistema propone sugerencias automáticas para mejorar procesos o productos.
 
-Contexto aumentado: La IA responde basándose en feedbacks reales
-
-Recomendaciones accionables: Sugerencias automáticas para mejorar
-
-Ejemplos de consultas
-python
+### 🐍 Ejemplos de consultas (Python)
+```python
 # ¿Qué problemas son más frecuentes?
 query = "¿Cuáles son los principales problemas que reportan los clientes?"
 
@@ -373,9 +371,10 @@ query = "¿Cómo se sienten los clientes sobre el producto X?"
 
 # Recomendaciones de mejora
 query = "¿Qué acciones podemos tomar para reducir los feedbacks negativos?"
+```
 
 
-🔐 Variables de Entorno
+## 🔐 Variables de Entorno
 Variable	Requerida	Descripción
 OPENAI_API_KEY	✅	API key de OpenAI
 PINECONE_API_KEY	✅	API key de Pinecone
@@ -384,7 +383,8 @@ TELEGRAM_BOT_TOKEN	❌	Token del bot de Telegram
 ADMIN_CHAT_ID	❌	Chat ID del administrador
 
 
-📊 Base de Datos
+## 📊 Base de Datos
+```
 Esquema SQLite
 sql
 CREATE TABLE feedbacks (
@@ -403,9 +403,10 @@ CREATE TABLE feedbacks (
 
 CREATE INDEX ix_feedbacks_texto_hash ON feedbacks(texto_hash);
 CREATE INDEX ix_feedbacks_fecha ON feedbacks(fecha);
+```
 
 
-🤝 Contribución
+## 🤝 Contribución
 Las contribuciones son bienvenidas. Por favor:
 
 Fork el proyecto
@@ -428,7 +429,7 @@ Escribe tests para nuevas funcionalidades
 Actualiza la documentación según sea necesario
 
 
-🙏 Agradecimientos
+## 🙏 Agradecimientos
 OpenAI por sus modelos de IA
 
 LangChain por el framework de orquestación
