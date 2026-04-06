@@ -159,6 +159,7 @@ feedback-classifier/
 ├── .gitignore                        # Archivos ignorados por Git
 ├── README.md                         # Documentación
 └── LICENSE                           # Licencia MIT
+```
 
 ## 🔧 Instalación y Configuración
 
@@ -233,6 +234,7 @@ Frontend: http://localhost:3000
 Backend API: http://localhost:8000
 
 Documentación API: http://localhost:8000/docs
+```
 
 📖 Uso del Sistema
 1. Cargar Feedback Manual
