@@ -177,9 +177,12 @@ feedback-classifier/
 ```bash
 git clone https://github.com/tu-usuario/feedback-classifier.git
 cd feedback-classifier
-Paso 2: Configurar el backend
-bash
-# Crear y activar entorno virtual
+```
+
+### Paso 2: Configurar el backend
+
+Crear y activar entorno virtual
+```
 cd backend
 python -m venv venv
 
@@ -191,9 +194,12 @@ source venv/bin/activate
 # Instalar dependencias
 pip install -r requirements.txt
 Paso 3: Configurar variables de entorno
-Crea un archivo .env en backend/:
+```
 
-env
+### Paso 3: Configurar variables de entorno
+
+Crea un archivo .env en backend/:
+```
 # OpenAI
 OPENAI_API_KEY=sk-...
 
@@ -204,29 +210,42 @@ PINECONE_INDEX_NAME=feedbacks
 # Telegram (opcional)
 TELEGRAM_BOT_TOKEN=...
 ADMIN_CHAT_ID=...
-Paso 4: Inicializar la base de datos
+```
+
+### Paso 4: Inicializar la base de datos
+```
 bash
 # Ejecutar migración
 python migrate_db.py
-Paso 5: Configurar el frontend
+```
+
+### Paso 5: Configurar el frontend
+```
 bash
 cd ../front
 npm install
 # o
 yarn install
-Paso 6: Ejecutar la aplicación
+```
+
+### Paso 6: Ejecutar la aplicación
 Terminal 1 - Backend:
 
+```
 bash
 cd backend
 uvicorn app.main:app --reload --port 8000
-Terminal 2 - Frontend:
+```
 
+Terminal 2 - Frontend:
+```
 bash
 cd front
 npm start
 # o
 yarn start
+```
+
 La aplicación estará disponible en:
 
 Frontend: http://localhost:3000
@@ -234,7 +253,7 @@ Frontend: http://localhost:3000
 Backend API: http://localhost:8000
 
 Documentación API: http://localhost:8000/docs
-```
+
 
 📖 Uso del Sistema
 1. Cargar Feedback Manual
