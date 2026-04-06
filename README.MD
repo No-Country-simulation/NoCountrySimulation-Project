@@ -375,12 +375,16 @@ query = "¿Qué acciones podemos tomar para reducir los feedbacks negativos?"
 
 
 ## 🔐 Variables de Entorno
-Variable	Requerida	Descripción
-OPENAI_API_KEY	✅	API key de OpenAI
-PINECONE_API_KEY	✅	API key de Pinecone
-PINECONE_INDEX_NAME	✅	Nombre del índice (default: "feedbacks")
-TELEGRAM_BOT_TOKEN	❌	Token del bot de Telegram
-ADMIN_CHAT_ID	❌	Chat ID del administrador
+
+Configura estas variables en tu archivo `.env`. Las marcadas con ✅ son estrictamente necesarias para el funcionamiento del núcleo (RAG y OpenAI).
+
+| Variable | Requerida | Descripción |
+| :--- | :---: | :--- |
+| `OPENAI_API_KEY` | ✅ | API key de OpenAI para procesamiento de lenguaje. |
+| `PINECONE_API_KEY` | ✅ | API key de Pinecone para la base de datos de vectores. |
+| `PINECONE_INDEX_NAME` | ✅ | Nombre del índice (valor por defecto: `"feedbacks"`). |
+| `TELEGRAM_BOT_TOKEN` | ❌ | Token del bot de Telegram para la integración de mensajería. |
+| `ADMIN_CHAT_ID` | ❌ | Chat ID del administrador para recibir notificaciones del sistema. |
 
 
 ## 📊 Base de Datos
@@ -407,26 +411,7 @@ CREATE INDEX ix_feedbacks_fecha ON feedbacks(fecha);
 
 
 ## 🤝 Contribución
-Las contribuciones son bienvenidas. Por favor:
-
-Fork el proyecto
-
-Crea tu rama (git checkout -b feature/AmazingFeature)
-
-Commit tus cambios (git commit -m 'Add some AmazingFeature')
-
-Push a la rama (git push origin feature/AmazingFeature)
-
-Abre un Pull Request
-
-Guías de Contribución
-Sigue el estilo de código PEP 8 para Python
-
-Usa componentes funcionales y hooks en React
-
-Escribe tests para nuevas funcionalidades
-
-Actualiza la documentación según sea necesario
+Las contribuciones son bienvenidas. 
 
 
 ## 🙏 Agradecimientos
