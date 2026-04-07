@@ -193,7 +193,6 @@ source venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
-Paso 3: Configurar variables de entorno
 ```
 
 ### Paso 3: Configurar variables de entorno
