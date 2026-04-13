@@ -140,3 +140,24 @@ body {
 .glow-destructive {
   box-shadow: 0 0 20px -5px hsl(var(--destructive) / 0.4);
 }
+
+/* Warning glow */
+.shadow-glow-warning {
+  box-shadow: 0 0 20px -5px hsl(var(--warning) / 0.4);
+}
+
+.hover\:shadow-glow-warning:hover {
+  box-shadow: 0 0 25px -5px hsl(var(--warning) / 0.5);
+}
+
+.bg-warning {
+  background-color: hsl(var(--warning));
+}
+
+.bg-warning\/80 {
+  background-color: hsl(var(--warning) / 0.8);
+}
+
+.text-warning {
+  color: hsl(var(--warning));
+}

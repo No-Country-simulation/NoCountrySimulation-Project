@@ -1,5 +1,5 @@
 
-// Front/src/App.js
+// front/src/App.js - Versión completa con el componente RAG al final
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,6 +16,7 @@ import Header from './components/Header';
 import UploadForm from './components/UploadForm';
 import InsightsDashboard from './components/InsightsDashboard';
 import FeedbackTable from './components/FeedbackTable';
+import RAGQuery from './components/RAGQuery';  // ← NUEVO IMPORT
 
 const API_BASE = 'http://localhost:8000';
 
@@ -161,6 +162,15 @@ function App() {
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">Lista de Feedbacks Clasificados</h2>
             </div>
             <FeedbackTable feedbacks={feedbacks} loading={loading} apiBase={API_BASE} />
+          </motion.section>
+
+          {/* RAG Query Section - NUEVO COMPONENTE AL FINAL */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+          >
+            <RAGQuery apiBase={API_BASE} />
           </motion.section>
         </main>
 
